@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://rawgit.com/jeromeetienne/ar.js/1.7.2/aframe/build/aframe-ar.min.js"></script>
+  </head>
+  <body style="margin: 0; overflow: hidden;">
+    <a-scene embedded arjs>
+      
+      <!-- AR-Marker für das Objekt -->
+      <a-marker preset="custom" type="pattern" url="marker.patt">
+        <!-- 3D-Text als Info-Anzeige -->
+        <a-text value="Hier ist deine Info!" position="0 0 0.5" scale="1 1 1" color="red"></a-text>
+      </a-marker>
+
+      <a-camera></a-camera>
+    </a-scene>
+  </body>
+</html>
