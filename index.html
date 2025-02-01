@@ -2,18 +2,20 @@
 <html>
   <head>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://rawgit.com/jeromeetienne/ar.js/1.7.2/aframe/build/aframe-ar.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/ar.js@1.7.2/aframe/build/aframe-ar.min.js"></script>
   </head>
   <body style="margin: 0; overflow: hidden;">
-    <a-scene embedded arjs="markersAreaEnabled: true; trackingMethod: best;">
-      
-      <!-- AR-Marker für das Objekt -->
+    <a-scene embedded arjs="trackingMethod: best; debugUIEnabled: false;">
+      <a-light type="directional" intensity="0.8" position="1 1 1"></a-light>
+
+      <!-- AR-Marker -->
       <a-marker type="pattern" url="https://raw.githubusercontent.com/oldnovize/oldNovize.github.io/main/marker.patt">
-        <!-- 3D-Text als Info-Anzeige -->
-        <a-text value="Hier ist deine Info!" position="0 0 0.5" scale="1 1 1" color="red"></a-text>
+        <a-entity>
+          <a-text value="Hier ist deine Info!" position="0 0 0.5" scale="1 1 1" color="red"></a-text>
+        </a-entity>
       </a-marker>
 
-      <a-camera></a-camera>
+      <a-camera position="0 0 0" look-controls-enabled="false"></a-camera>
     </a-scene>
   </body>
 </html>
