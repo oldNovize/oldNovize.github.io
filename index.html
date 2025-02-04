@@ -7,7 +7,7 @@
   
   <!-- A-Frame einbinden -->
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  <!-- Versuche hier ggf. eine neuere Version von MindAR -->
+  <!-- MindAR.js einbinden (Version 1.1.1) -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.1/dist/mindar-image-aframe.prod.js"></script>
   
   <style>
@@ -15,14 +15,22 @@
   </style>
 </head>
 <body>
-  <a-scene mindar-image="imageTargetSrc: https://oldnovize.github.io/targets.mind; debugUIEnabled: true;" embedded color-space="sRGB">
+  <a-scene 
+      mindar-image="imageTargetSrc: targets.mind; debugUIEnabled: true;" 
+      embedded 
+      color-space="sRGB" 
+      vr-mode-ui="enabled: false" 
+      device-orientation-permission-ui="enabled: true">
       
       <a-entity mindar-image-target="targetIndex: 0">
-          <a-entity 
-              text="value: Check it out!; color: red; align: center; width: 2" 
-              position="0 0.3 0" 
-              scale="0.5 0.5 0.5">
-          </a-entity>
+          <!-- Text, der beim Erkennen erscheint -->
+          <a-text value="Check it out!" 
+                  color="red" 
+                  align="center" 
+                  width="2" 
+                  position="0 0.3 0" 
+                  scale="0.5 0.5 0.5">
+          </a-text>
       </a-entity>
   
       <a-camera position="0 0 0"></a-camera>
