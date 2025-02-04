@@ -5,25 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Image Tracking mit MindAR</title>
   
-  <!-- A-Frame einbinden -->
+  <!-- A-Frame & MindAR.js -->
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  <!-- MindAR.js einbinden (Version 1.1.1) -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.1/dist/mindar-image-aframe.prod.js"></script>
   
   <style>
       body { margin: 0; overflow: hidden; }
+      #startButton { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+         padding: 10px 20px; font-size: 18px; z-index: 1000; cursor: pointer; }
   </style>
 </head>
 <body>
-  <a-scene 
-      mindar-image="imageTargetSrc: targets.mind; debugUIEnabled: true;" 
-      embedded 
-      color-space="sRGB" 
-      vr-mode-ui="enabled: false" 
-      device-orientation-permission-ui="enabled: true">
+
+  <!-- Start-Button für iOS-Kamera-Zugriff -->
+  <button id="startButton">Start AR</button>
+
+  <a-scene id="arScene" style="display: none;" 
+           mindar-image="imageTargetSrc: https://oldnovize.github.io/targets.mind; debugUIEnabled: true;" 
+           embedded color-space="sRGB"
+           vr-mode-ui="enabled: false" 
+           device-orientation-permission-ui="enabled: true">
       
       <a-entity mindar-image-target="targetIndex: 0">
-          <!-- Text, der beim Erkennen erscheint -->
           <a-text value="Check it out!" 
                   color="red" 
                   align="center" 
@@ -32,8 +35,40 @@
                   scale="0.5 0.5 0.5">
           </a-text>
       </a-entity>
-  
+
       <a-camera position="0 0 0"></a-camera>
   </a-scene>
+
+  <script>
+    // iPhone: Start-Button notwendig für Kamera-Zugriff
+    document.getElementById("startButton").addEventListener("click", function() {
+        document.getElementById("arScene").style.display = "block";
+        this.style.display = "none";
+    });
+
+    // Autofokus für die Kamera aktivieren (Safari-Fix)
+    setInterval(() => {
+      let video = document.querySelector("video");
+      if (video) {
+        video.setAttribute("autofocus", "true");
+        video.setAttribute("playsinline", "true");
+      }
+    }, 1000);
+
+    // iOS Wake Lock aktivieren (verhindert Schlafmodus)
+    let wakeLock = null;
+    async function requestWakeLock() {
+      if ('wakeLock' in navigator) {
+        try {
+          wakeLock = await navigator.wakeLock.request('screen');
+        } catch (err) {
+          console.error(`${err.name}, ${err.message}`);
+        }
+      }
+    }
+    document.addEventListener("visibilitychange", requestWakeLock);
+    requestWakeLock();
+  </script>
+
 </body>
 </html>
