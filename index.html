@@ -1,21 +1,56 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/ar.js@1.7.2/aframe/build/aframe-ar.min.js"></script>
-  </head>
-  <body style="margin: 0; overflow: hidden;">
-    <a-scene embedded arjs="trackingMethod: best; debugUIEnabled: false;">
-      <a-light type="directional" intensity="0.8" position="1 1 1"></a-light>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AR.js für iPhone 15</title>
 
-      <!-- AR-Marker -->
-      <a-marker type="pattern" url="https://raw.githubusercontent.com/oldnovize/oldNovize.github.io/marker-tracker/marker.patt">
-        <a-entity>
-          <a-text value="Hier ist deine Info!" position="0 0 0.5" scale="1 1 1" color="red"></a-text>
-        </a-entity>
-      </a-marker>
+  <!-- A-Frame & AR.js -->
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ar.js@1.7.2/aframe/build/aframe-ar.min.js"></script>
 
-      <a-camera position="0 0 0" look-controls-enabled="false"></a-camera>
-    </a-scene>
-  </body>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    #startButton {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      padding: 10px 20px; font-size: 18px; z-index: 1000; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Start-Button für iOS Kamera-Zugriff -->
+  <button id="startButton">Start AR</button>
+
+  <a-scene id="arScene" style="display: none;" embedded arjs="trackingMethod: best; debugUIEnabled: false;">
+    <a-light type="directional" intensity="0.8" position="1 1 1"></a-light>
+
+    <!-- AR-Marker -->
+    <a-marker type="pattern" url="https://raw.githubusercontent.com/oldnovize/oldNovize.github.io/marker-tracker/marker.patt">
+      <a-entity>
+        <a-text value="Hier ist deine Info!" position="0 0 0.5" scale="1 1 1" color="red"></a-text>
+      </a-entity>
+    </a-marker>
+
+    <a-camera position="0 0 0" look-controls-enabled="false"></a-camera>
+  </a-scene>
+
+  <script>
+    // Start-Button erforderlich für iOS (Kamera-Zugriff)
+    document.getElementById("startButton").addEventListener("click", function() {
+        document.getElementById("arScene").style.display = "block";
+        this.style.display = "none";
+    });
+
+    // Autofokus für iPhone-Kamera aktivieren (Safari Fix)
+    setInterval(() => {
+      let video = document.querySelector("video");
+      if (video) {
+        video.setAttribute("playsinline", "true");
+        video.setAttribute("autofocus", "true");
+      }
+    }, 1000);
+  </script>
+
+</body>
 </html>
