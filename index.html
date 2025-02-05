@@ -1,74 +1,21 @@
 <!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Image Tracking mit MindAR</title>
-  
-  <!-- A-Frame & MindAR.js -->
-  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.1/dist/mindar-image-aframe.prod.js"></script>
-  
-  <style>
-      body { margin: 0; overflow: hidden; }
-      #startButton { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-         padding: 10px 20px; font-size: 18px; z-index: 1000; cursor: pointer; }
-  </style>
-</head>
-<body>
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/ar.js@1.7.2/aframe/build/aframe-ar.min.js"></script>
+  </head>
+  <body style="margin: 0; overflow: hidden;">
+    <a-scene embedded arjs="trackingMethod: best; debugUIEnabled: false;">
+      <a-light type="directional" intensity="0.8" position="1 1 1"></a-light>
 
-  <!-- Start-Button für iOS-Kamera-Zugriff -->
-  <button id="startButton">Start AR</button>
+      <!-- AR-Marker -->
+      <a-marker type="pattern" url="https://raw.githubusercontent.com/oldnovize/oldNovize.github.io/main/marker.patt">
+        <a-entity>
+          <a-text value="Hier ist deine Info!" position="0 0 0.5" scale="1 1 1" color="red"></a-text>
+        </a-entity>
+      </a-marker>
 
-  <a-scene id="arScene" style="display: none;" 
-           mindar-image="imageTargetSrc: https://oldnovize.github.io/targets.mind; debugUIEnabled: true;" 
-           embedded color-space="sRGB"
-           vr-mode-ui="enabled: false" 
-           device-orientation-permission-ui="enabled: true">
-      
-      <a-entity mindar-image-target="targetIndex: 0">
-          <a-text value="Check it out!" 
-                  color="red" 
-                  align="center" 
-                  width="2" 
-                  position="0 0.3 0" 
-                  scale="0.5 0.5 0.5">
-          </a-text>
-      </a-entity>
-
-      <a-camera position="0 0 0"></a-camera>
-  </a-scene>
-
-  <script>
-    // iPhone: Start-Button notwendig für Kamera-Zugriff
-    document.getElementById("startButton").addEventListener("click", function() {
-        document.getElementById("arScene").style.display = "block";
-        this.style.display = "none";
-    });
-
-    // Autofokus für die Kamera aktivieren (Safari-Fix)
-    setInterval(() => {
-      let video = document.querySelector("video");
-      if (video) {
-        video.setAttribute("autofocus", "true");
-        video.setAttribute("playsinline", "true");
-      }
-    }, 1000);
-
-    // iOS Wake Lock aktivieren (verhindert Schlafmodus)
-    let wakeLock = null;
-    async function requestWakeLock() {
-      if ('wakeLock' in navigator) {
-        try {
-          wakeLock = await navigator.wakeLock.request('screen');
-        } catch (err) {
-          console.error(`${err.name}, ${err.message}`);
-        }
-      }
-    }
-    document.addEventListener("visibilitychange", requestWakeLock);
-    requestWakeLock();
-  </script>
-
-</body>
+      <a-camera position="0 0 0" look-controls-enabled="false"></a-camera>
+    </a-scene>
+  </body>
 </html>
