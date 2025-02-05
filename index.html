@@ -22,12 +22,7 @@
   <!-- Start-Button für iOS-Kamera-Zugriff -->
   <button id="startButton">Start AR</button>
 
-  <a-scene id="arScene" style="display: none;" 
-           mindar-image="imageTargetSrc: https://oldnovize.github.io/targets.mind; debugUIEnabled: true;" 
-           embedded color-space="sRGB"
-           vr-mode-ui="enabled: false" 
-           device-orientation-permission-ui="enabled: true">
-      
+  <a-scene mindar-image="imageTargetSrc: https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js/examples/image-tracking/assets/card-example/card.mind; debugUIEnabled: true;">    
       <a-entity mindar-image-target="targetIndex: 0">
           <a-text value="Check it out!" 
                   color="red" 
