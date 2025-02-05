@@ -11,8 +11,10 @@
   
   <style>
       body { margin: 0; overflow: hidden; }
-      #startButton { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-         padding: 10px 20px; font-size: 18px; z-index: 1000; cursor: pointer; }
+      #startButton { 
+         position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+         padding: 10px 20px; font-size: 18px; z-index: 1000; cursor: pointer;
+      }
   </style>
 </head>
 <body>
@@ -40,34 +42,51 @@
   </a-scene>
 
   <script>
-    // iPhone: Start-Button notwendig für Kamera-Zugriff
-    document.getElementById("startButton").addEventListener("click", function() {
+    // 🔹 iPhone Fix: Start-Button für Kamera-Zugriff notwendig
+    document.getElementById("startButton").addEventListener("click", async function() {
         document.getElementById("arScene").style.display = "block";
         this.style.display = "none";
+
+        // Wake Lock aktivieren (verhindert Schlafmodus)
+        await requestWakeLock();
     });
 
-    // Autofokus für die Kamera aktivieren (Safari-Fix)
+    // 🔹 Autofokus für iPhone-Kamera aktivieren (Safari Fix)
     setInterval(() => {
       let video = document.querySelector("video");
       if (video) {
-        video.setAttribute("autofocus", "true");
         video.setAttribute("playsinline", "true");
+        video.setAttribute("autofocus", "true");
       }
     }, 1000);
 
-    // iOS Wake Lock aktivieren (verhindert Schlafmodus)
+    // 🔹 iOS Wake Lock aktivieren (verhindert Schlafmodus)
     let wakeLock = null;
     async function requestWakeLock() {
       if ('wakeLock' in navigator) {
         try {
           wakeLock = await navigator.wakeLock.request('screen');
         } catch (err) {
-          console.error(`${err.name}, ${err.message}`);
+          console.error("Wake Lock Fehler:", err);
         }
       }
     }
-    document.addEventListener("visibilitychange", requestWakeLock);
-    requestWakeLock();
+    
+    // 🔹 Wake Lock reaktivieren, wenn der Nutzer zurückkehrt
+    document.addEventListener("visibilitychange", async () => {
+      if (document.visibilityState === "visible") {
+        await requestWakeLock();
+      }
+    });
+
+    // 🔹 Überprüfe, ob die .mind-Datei geladen wird (Debugging)
+    fetch("https://oldnovize.github.io/targets.mind")
+      .then(response => {
+        if (!response.ok) {
+          console.error("⚠ Fehler: .mind-Datei nicht gefunden!");
+        }
+      })
+      .catch(error => console.error("⚠ Netzwerk-Fehler:", error));
   </script>
 
 </body>
