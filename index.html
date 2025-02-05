@@ -18,15 +18,16 @@
   </style>
 </head>
 <body>
+  <!-- Test: Kamera direkt anzeigen -->
+  <video id="cameraFeed" autoplay playsinline style="position: absolute; top: 10px; left: 10px; width: 200px; z-index: 1000; background: black;"></video>
 
-  <!-- Start-Button für iOS-Kamera-Zugriff -->
   <button id="startButton">Start AR</button>
 
-  <a-scene id="arScene" style="display: none;"
-         mindar-image="imageTargetSrc: https://oldnovize.github.io/targets.mind; debugUIEnabled: true; filterMinCF: 0.0001; filterBeta: 0.001"
-         embedded color-space="sRGB"
-         vr-mode-ui="enabled: false"
-         device-orientation-permission-ui="enabled: true">
+  <a-scene id="arScene" style="display: none;" 
+           mindar-image="imageTargetSrc: https://oldnovize.github.io/targets.mind; debugUIEnabled: true;"
+           embedded color-space="sRGB"
+           vr-mode-ui="enabled: false"
+           device-orientation-permission-ui="enabled: true">
       
       <a-entity mindar-image-target="targetIndex: 0">
           <a-text value="Check it out!" 
@@ -42,51 +43,24 @@
   </a-scene>
 
   <script>
-    // 🔹 iPhone Fix: Start-Button für Kamera-Zugriff notwendig
+    // Kamera-Test: Versuche ein Video-Feed von der Kamera anzuzeigen
+    async function testCamera() {
+      try {
+        let stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        document.getElementById("cameraFeed").srcObject = stream;
+        console.log("✅ Kamera erfolgreich gestartet!");
+      } catch (err) {
+        console.error("❌ Kamera-Fehler:", err);
+      }
+    }
+
+    testCamera();
+
+    // Start-Button für iOS
     document.getElementById("startButton").addEventListener("click", async function() {
         document.getElementById("arScene").style.display = "block";
         this.style.display = "none";
-
-        // Wake Lock aktivieren (verhindert Schlafmodus)
-        await requestWakeLock();
     });
-
-    // 🔹 Autofokus für iPhone-Kamera aktivieren (Safari Fix)
-    setInterval(() => {
-      let video = document.querySelector("video");
-      if (video) {
-        video.setAttribute("playsinline", "true");
-        video.setAttribute("autofocus", "true");
-      }
-    }, 1000);
-
-    // 🔹 iOS Wake Lock aktivieren (verhindert Schlafmodus)
-    let wakeLock = null;
-    async function requestWakeLock() {
-      if ('wakeLock' in navigator) {
-        try {
-          wakeLock = await navigator.wakeLock.request('screen');
-        } catch (err) {
-          console.error("Wake Lock Fehler:", err);
-        }
-      }
-    }
-    
-    // 🔹 Wake Lock reaktivieren, wenn der Nutzer zurückkehrt
-    document.addEventListener("visibilitychange", async () => {
-      if (document.visibilityState === "visible") {
-        await requestWakeLock();
-      }
-    });
-
-    // 🔹 Überprüfe, ob die .mind-Datei geladen wird (Debugging)
-    fetch("https://oldnovize.github.io/targets.mind")
-      .then(response => {
-        if (!response.ok) {
-          console.error("⚠ Fehler: .mind-Datei nicht gefunden!");
-        }
-      })
-      .catch(error => console.error("⚠ Netzwerk-Fehler:", error));
   </script>
 
 </body>
