@@ -42,19 +42,52 @@
   </a-scene>
 
   <script>
-  // Zeigt alle Fehler in einem DIV auf der Seite
-  window.onerror = function(message, source, lineno, colno, error) {
-    let log = document.createElement("div");
-    log.style.position = "absolute";
-    log.style.top = "20px";
-    log.style.left = "10px";
-    log.style.background = "white";
-    log.style.padding = "10px";
-    log.style.zIndex = "1000";
-    log.innerHTML = `<strong>Fehler:</strong> ${message}<br>Quelle: ${source}<br>Zeile: ${lineno}:${colno}`;
-    document.body.appendChild(log);
-  };
-</script>
+    // 🔹 iPhone Fix: Start-Button für Kamera-Zugriff notwendig
+    document.getElementById("startButton").addEventListener("click", async function() {
+        document.getElementById("arScene").style.display = "block";
+        this.style.display = "none";
+
+        // Wake Lock aktivieren (verhindert Schlafmodus)
+        await requestWakeLock();
+    });
+
+    // 🔹 Autofokus für iPhone-Kamera aktivieren (Safari Fix)
+    setInterval(() => {
+      let video = document.querySelector("video");
+      if (video) {
+        video.setAttribute("playsinline", "true");
+        video.setAttribute("autofocus", "true");
+      }
+    }, 1000);
+
+    // 🔹 iOS Wake Lock aktivieren (verhindert Schlafmodus)
+    let wakeLock = null;
+    async function requestWakeLock() {
+      if ('wakeLock' in navigator) {
+        try {
+          wakeLock = await navigator.wakeLock.request('screen');
+        } catch (err) {
+          console.error("Wake Lock Fehler:", err);
+        }
+      }
+    }
+    
+    // 🔹 Wake Lock reaktivieren, wenn der Nutzer zurückkehrt
+    document.addEventListener("visibilitychange", async () => {
+      if (document.visibilityState === "visible") {
+        await requestWakeLock();
+      }
+    });
+
+    // 🔹 Überprüfe, ob die .mind-Datei geladen wird (Debugging)
+    fetch("https://oldnovize.github.io/targets.mind")
+      .then(response => {
+        if (!response.ok) {
+          console.error("⚠ Fehler: .mind-Datei nicht gefunden!");
+        }
+      })
+      .catch(error => console.error("⚠ Netzwerk-Fehler:", error));
+  </script>
 
 </body>
 </html>
