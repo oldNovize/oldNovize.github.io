@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR Objekterkennung</title>
+
+    <!-- MindAR Bibliothek -->
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.1/dist/mindar-image-aframe.prod.js"></script>
+    
+    <!-- A-Frame -->
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+
+    <style>
+        body { margin: 0; overflow: hidden; }
+        #startButton {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 15px 30px;
+            font-size: 18px;
+            background: #007bff; color: white;
+            border: none; border-radius: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <button id="startButton">Start AR</button>
+
+    <a-scene mindar-image="imageTargetSrc: https://oldNovize.github.io/targets.mind; 
+                           uiLoading: no; uiError: no; uiScanning: no;"
+             embedded
+             color-space="sRGB"
+             vr-mode-ui="enabled: false"
+             device-orientation-permission-ui="enabled: true">
+        
+        <!-- AR-Text anzeigen, wenn das Objekt erkannt wird -->
+        <a-entity mindar-image-target="targetIndex: 0">
+            <a-text value="Check it out!" color="red" align="center" width="2" position="0 0.3 0"></a-text>
+        </a-entity>
+
+        <a-camera position="0 0 0"></a-camera>
+    </a-scene>
+
+    <script>
+        // Start-Button Funktion
+        document.getElementById("startButton").addEventListener("click", async () => {
+            // Kamera-Berechtigungen abfragen
+            try {
+                await navigator.mediaDevices.getUserMedia({ video: true });
+                document.querySelector("a-scene").style.display = "block";
+                document.getElementById("startButton").style.display = "none";
+            } catch (err) {
+                alert("Fehler: Kamera-Zugriff verweigert!");
+            }
+        });
+    </script>
+</body>
+</html>
