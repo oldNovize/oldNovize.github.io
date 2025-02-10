@@ -48,7 +48,7 @@
     </div>
 
     <!-- AR-Szene -->
-    <a-scene mindar-image="imageTargetSrc: https://oldNovize.github.io/targets.mind; 
+    <a-scene id="arScene" mindar-image="imageTargetSrc: https://oldNovize.github.io/targets.mind; 
                            uiLoading: no; uiError: no; uiScanning: no;"
              embedded
              color-space="sRGB"
@@ -57,7 +57,7 @@
              style="display: none;">
         
         <!-- AR-Text wird angezeigt, wenn der Marker erkannt wird -->
-        <a-entity mindar-image-target="targetIndex: 0">
+        <a-entity id="marker" mindar-image-target="targetIndex: 0">
             <a-text value="Check it out!" position="0 0 -1" scale="2 2 2" color="red"></a-text>
         </a-entity>
 
@@ -65,26 +65,44 @@
     </a-scene>
 
     <script>
-        // Start-Button Logik
-        async function startAR() {
-            try {
-                await navigator.mediaDevices.getUserMedia({ video: true });
+        document.addEventListener("DOMContentLoaded", () => {
+            const startButton = document.getElementById("startButton");
+            const retryButton = document.getElementById("retryButton");
+            const errorContainer = document.getElementById("errorContainer");
+            const arScene = document.getElementById("arScene");
+            const marker = document.getElementById("marker");
 
-                // Kamera-Zugriff erfolgreich → AR-Szene anzeigen
-                document.querySelector("a-scene").style.display = "block";
-                document.getElementById("startButton").style.display = "none";
-                document.getElementById("errorContainer").style.display = "none";
-            } catch (err) {
-                // Kamera-Zugriff verweigert → Fehler anzeigen
-                document.getElementById("errorContainer").style.display = "flex";
+            async function startAR() {
+                try {
+                    console.log("Starte AR...");
+
+                    // Kamera-Zugriff testen
+                    await navigator.mediaDevices.getUserMedia({ video: true });
+                    console.log("Kamera-Zugriff erfolgreich!");
+
+                    // AR-Szene sichtbar machen
+                    arScene.style.display = "block";
+                    startButton.style.display = "none";
+                    errorContainer.style.display = "none";
+
+                    // Debug: Ist das `targetFound`-Event aktiv?
+                    marker.addEventListener("targetFound", () => {
+                        console.log("Marker erkannt!");
+                    });
+
+                    marker.addEventListener("targetLost", () => {
+                        console.log("Marker verloren!");
+                    });
+
+                } catch (err) {
+                    console.error("Kamera-Zugriff fehlgeschlagen:", err);
+                    errorContainer.style.display = "flex";
+                }
             }
-        }
 
-        // Event Listener für den Start-Button
-        document.getElementById("startButton").addEventListener("click", startAR);
-
-        // Event Listener für den „Erneut versuchen“-Button
-        document.getElementById("retryButton").addEventListener("click", startAR);
+            startButton.addEventListener("click", startAR);
+            retryButton.addEventListener("click", startAR);
+        });
     </script>
 
 </body>
